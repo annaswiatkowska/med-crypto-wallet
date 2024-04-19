@@ -1,5 +1,7 @@
 from phe import paillier
+from cryptography.fernet import Fernet
 
+# Paillier keys functions
 def generate_key_pair():
     return paillier.generate_paillier_keypair()
 
@@ -47,18 +49,43 @@ def decrypt_dict(private_key, dict):
         dict[key] = out
     return dict
 
-# example_data = {
-#     "name": "John Doe",
-#     "age": 30,
-#     "height": 175.5,
-#     "student": True
-# }
+# Fernet key functions
+def generate_key():
+    return Fernet.generate_key()
 
-# pub, priv = generate_key_pair()
+def encrypt_value(value, key):
+    f = Fernet(key)
+    return f.encrypt(value.encode()).decode()
 
-# encrypt_dict(pub, example_data)
-# print(example_data)
+def decrypt_value(encrypted_value, key):
+    f = Fernet(key)
+    return f.decrypt(encrypted_value.encode()).decode()
 
-# decrypt_dict(priv, example_data)
+# TEST 1
+def test1():
+    example_data = {
+    "name": "John Doe",
+    "age": 30,
+    "height": 175.5,
+    "student": True
+    }
 
-# print(example_data)
+    pub, priv = generate_key_pair()
+    encrypt_dict(pub, example_data)
+    print(example_data)
+
+    decrypt_dict(priv, example_data)
+    print(example_data)
+
+# TEST 2
+def test2():
+    fernet_key = generate_key()
+    value = 'password123'
+    encrypted_value = encrypt_value(value, fernet_key)
+    print("Encrypted value:", encrypted_value)
+
+    decrypted_value = decrypt_value(encrypted_value, fernet_key)
+    print("Decrypted value:", decrypted_value)
+
+if __name__ == "__main__":
+    test2()
