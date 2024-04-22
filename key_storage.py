@@ -6,7 +6,7 @@ def store_keys(public_key, private_key, user_id):
     keyring.set_password(user_id, 'public_key', serialize_public_key(public_key))
     keyring.set_password(user_id, 'private_key', serialize_private_key(private_key))
 
-def store_fernet_key(user_id, fernet_key):
+def store_fernet_key(fernet_key, user_id):
     keyring.set_password(user_id, 'fernet_key', fernet_key)
 
 def get_keys(user_id):

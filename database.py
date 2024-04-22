@@ -17,9 +17,18 @@ def connect():
 
     return conn, conn.cursor()
 
-def execute_query(cursor, query):
+def select(cursor, query):
     cursor.execute(query)
     return cursor.fetchall()
+
+def insert(cursor, query):
+    try:
+        cursor.execute(query)
+        print('Insertion successful. Status message: ', cursor.statusmessage)
+        cursor.execute("COMMIT;")
+    except psycopg2.Error as e:
+        print('Error: ', e)
+
 
 def close_connection(conn, cursor):
     cursor.close()
@@ -28,6 +37,6 @@ def close_connection(conn, cursor):
 # TEST
 if __name__ == "__main__":
     conn, cursor = connect()
-    result = execute_query(cursor, '')
-    print(result[0][0])
+    result = select(cursor, 'SELECT * FROM users;')
+    print(result)
     close_connection(conn, cursor)

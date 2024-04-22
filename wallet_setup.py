@@ -26,3 +26,8 @@ def generate_mnemonic():
     with open('mnemonic.txt', 'w') as file:
         file.write(mnemonic)
     get_wallet().store_mnemonic(mnemonic)
+
+if __name__ == "__main__":
+    wallet = get_wallet()
+    wallet.remove_latest_account()
+    print(wallet.get_accounts())
