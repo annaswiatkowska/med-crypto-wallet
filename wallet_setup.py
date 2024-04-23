@@ -27,7 +27,13 @@ def generate_mnemonic():
         file.write(mnemonic)
     get_wallet().store_mnemonic(mnemonic)
 
+def request_funds(address):
+    url = os.environ.get('FAUCET_URL')
+    resp = wallet.get_client().request_funds_from_faucet(url, address)
+    return resp
+
 if __name__ == "__main__":
     wallet = get_wallet()
-    wallet.remove_latest_account()
-    print(wallet.get_accounts())
+    acc = wallet.get_account(0)
+    add = acc.addresses()[0].address
+    print(acc.addresses())

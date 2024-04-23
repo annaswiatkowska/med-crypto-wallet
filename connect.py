@@ -1,8 +1,11 @@
+import os
+from dotenv import load_dotenv
 from iota_sdk import Client
 
-# Create a Client instance
-client = Client(nodes=['https://api.testnet.shimmer.network'])
+load_dotenv()
+node_url = os.getenv("NODE_URL")
 
-# Get the node info
+client = Client(nodes=[node_url])
+
 node_info = client.get_info()
 print(f'{node_info}')

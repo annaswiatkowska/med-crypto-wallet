@@ -44,10 +44,11 @@ def create_client(name, surname, insurance_id, password, is_doctor):
     encrypted_password = encryption.encrypt_value(password, fernet_key)
     account, address = setup_account()
     wallet_address = address[0].address
+    wallet_id = account.get_metadata().index
 
     # connect to database and insert new client
     conn, cursor = database.connect()
-    database.insert(cursor, queries.insert_client(name, surname, insurance_id, encrypted_password, wallet_address, is_doctor))
+    database.insert(cursor, queries.insert_client(name, surname, insurance_id, encrypted_password, wallet_address, is_doctor, wallet_id))
 
     # update account alias and store keys
     query_result = database.select(cursor, queries.get_user_id(insurance_id))
