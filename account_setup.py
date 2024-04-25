@@ -1,6 +1,3 @@
-# add check on executed queries
-# TEST TEST TEST
-
 import re
 import encryption
 import key_storage
@@ -8,9 +5,10 @@ import database
 import queries
 import wallet_setup
 
-def setup_account():
-    account = wallet_setup.get_wallet().create_account()
-    return account, account.generate_ed25519_addresses(1)
+def setup_account(insurance_id):
+    account = wallet_setup.get_wallet().create_account(alias=insurance_id)
+    account.generate_ed25519_addresses(1)
+    return account
 
 def store_keys(public_key, private_key, fernet_key, user_id):
     key_storage.store_keys(public_key, private_key, user_id)
@@ -42,13 +40,12 @@ def create_client(name, surname, insurance_id, password, is_doctor):
     public_key, private_key = encryption.generate_key_pair()
     fernet_key = encryption.generate_key()
     encrypted_password = encryption.encrypt_value(password, fernet_key)
-    account, address = setup_account()
-    wallet_address = address[0].address
-    wallet_id = account.get_metadata().index
+    account = setup_account(insurance_id)
+    account_id = account.get_metadata().index
 
     # connect to database and insert new client
     conn, cursor = database.connect()
-    database.insert(cursor, queries.insert_client(name, surname, insurance_id, encrypted_password, wallet_address, is_doctor, wallet_id))
+    database.insert(cursor, queries.insert_client(name, surname, insurance_id, encrypted_password, is_doctor, account_id))
 
     # update account alias and store keys
     query_result = database.select(cursor, queries.get_user_id(insurance_id))
@@ -60,5 +57,5 @@ def create_client(name, surname, insurance_id, password, is_doctor):
     return 'Client creation was successfull'
     
 if __name__ == "__main__":
-    output = create_client('Alice', 'Smith', 'GG123456C', 'Password1!', False)
+    output = create_client('Anna', 'Swift', 'TT123456P', 'Paragraph11!', True)
     print(output)
