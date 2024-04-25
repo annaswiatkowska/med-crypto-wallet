@@ -50,7 +50,6 @@ def create_client(name, surname, insurance_id, password, is_doctor):
     # update account alias and store keys
     query_result = database.select(cursor, queries.get_user_id(insurance_id))
     user_id = query_result[0][0]
-    account.set_alias(str(user_id))
     store_keys(public_key, private_key, fernet_key, str(user_id))
 
     database.close_connection(conn, cursor)
