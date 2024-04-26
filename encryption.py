@@ -53,11 +53,11 @@ def decrypt_dict(private_key, dict):
 def generate_key():
     return Fernet.generate_key()
 
-def encrypt_value(value, key):
+def encrypt_password(value, key):
     f = Fernet(key)
     return f.encrypt(value.encode()).decode()
 
-def decrypt_value(encrypted_value, key):
+def decrypt_password(encrypted_value, key):
     f = Fernet(key)
     return f.decrypt(encrypted_value.encode()).decode()
 
@@ -81,10 +81,10 @@ def test1():
 def test2():
     fernet_key = generate_key()
     value = 'password123'
-    encrypted_value = encrypt_value(value, fernet_key)
+    encrypted_value = encrypt_password(value, fernet_key)
     print("Encrypted value:", encrypted_value)
 
-    decrypted_value = decrypt_value(encrypted_value, fernet_key)
+    decrypted_value = decrypt_password(encrypted_value, fernet_key)
     print("Decrypted value:", decrypted_value)
 
 if __name__ == "__main__":

@@ -41,7 +41,7 @@ def create_client(name, surname, insurance_id, password, is_doctor):
     public_key, private_key = encryption.generate_key_pair()
     fernet_key = encryption.generate_key()
     store_keys(public_key, private_key, fernet_key, insurance_id)
-    encrypted_password = encryption.encrypt_value(password, fernet_key)
+    encrypted_password = encryption.encrypt_password(password, fernet_key)
 
     # setup client account
     account = setup_account(insurance_id)
@@ -56,5 +56,5 @@ def create_client(name, surname, insurance_id, password, is_doctor):
     return 'Client creation was successfull'
     
 if __name__ == "__main__":
-    output = create_client('Michael', 'Flint', 'CC123456Y', 'Florida7!', True)
+    output = create_client('Alice', 'Smith', 'GG123456F', '#Paragraph89', False)
     print(output)

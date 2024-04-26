@@ -34,4 +34,3 @@ def request_funds(address):
 
 if __name__ == "__main__":
     wallet = get_wallet()
-    print(wallet.get_accounts())

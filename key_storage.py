@@ -1,5 +1,4 @@
 import json
-import base64
 import keyring
 from phe import paillier
 
@@ -8,7 +7,7 @@ def store_keys(public_key, private_key, id):
     keyring.set_password(id, 'private_key', serialize_private_key(private_key))
 
 def store_fernet_key(fernet_key, id):
-    keyring.set_password(id, 'fernet_key', fernet_key)
+    keyring.set_password(id, 'fernet_key', fernet_key.decode())
 
 def get_keys(id):
     public_key = keyring.get_password(id, 'public_key')
@@ -26,7 +25,7 @@ def get_fernet_key(id):
     if fernet_key is None:
         return None
 
-    return fernet_key
+    return fernet_key.encode()
 
 def remove_key(id, key_type):
     keyring.delete_password(id, key_type)
