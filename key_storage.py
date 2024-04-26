@@ -1,33 +1,35 @@
 import json
+import base64
 import keyring
 from phe import paillier
 
-def store_keys(public_key, private_key, user_id):
-    keyring.set_password(user_id, 'public_key', serialize_public_key(public_key))
-    keyring.set_password(user_id, 'private_key', serialize_private_key(private_key))
+def store_keys(public_key, private_key, id):
+    keyring.set_password(id, 'public_key', serialize_public_key(public_key))
+    keyring.set_password(id, 'private_key', serialize_private_key(private_key))
 
-def store_fernet_key(fernet_key, user_id):
-    keyring.set_password(user_id, 'fernet_key', fernet_key)
+def store_fernet_key(fernet_key, id):
+    keyring.set_password(id, 'fernet_key', fernet_key)
 
-def get_keys(user_id):
-    public_key = keyring.get_password(user_id, 'public_key')
-    private_key = keyring.get_password(user_id, 'private_key')
+def get_keys(id):
+    public_key = keyring.get_password(id, 'public_key')
+    private_key = keyring.get_password(id, 'private_key')
 
     if public_key is None or private_key is None:
         return None, None
     
-    return load_private_key(private_key, load_public_key(public_key))
+    pub_key = load_public_key(public_key)
+    return pub_key, load_private_key(private_key, pub_key)
 
-def get_fernet_key(user_id):
-    fernet_key = keyring.get_password(user_id, 'fernet_key')
+def get_fernet_key(id):
+    fernet_key = keyring.get_password(id, 'fernet_key')
 
     if fernet_key is None:
         return None
 
     return fernet_key
 
-def remove_key(user_id, key_type):
-    keyring.delete_password(user_id, key_type)
+def remove_key(id, key_type):
+    keyring.delete_password(id, key_type)
 
 def serialize_public_key(public_key):
     dict = {}
@@ -58,8 +60,8 @@ def test():
     value = 133
     encrypted_value = public_key.encrypt(value)
 
-    store_keys(public_key, private_key, 'test')
-    pub_key, priv_key = get_keys('test')
+    store_keys(public_key, private_key, 'test1')
+    pub_key, priv_key = get_keys('test1')
     
     decrypted_value = priv_key.decrypt(encrypted_value)
     print(decrypted_value)
