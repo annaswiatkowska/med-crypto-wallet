@@ -15,10 +15,11 @@ def to_string(num_list):
     return ''.join([chr(num) for num in num_list])
 
 def encrypt_data(public_key, data):
-    return public_key.encrypt(data)
+    enc = public_key.encrypt(data)
+    return enc.ciphertext()
 
 def encrypt_list(public_key, list):
-    return [public_key.encrypt(num) for num in list]
+   return [encrypt_data(public_key, num) for num in list]
 
 def encrypt_dict(public_key, dict):
     for key in dict:
@@ -33,19 +34,20 @@ def encrypt_dict(public_key, dict):
         dict[key] = out
     return dict
 
-def decrypt_data(private_key, data):
-    return private_key.decrypt(data)
+def decrypt_data(public_key, private_key, data):
+    enc_num = paillier.EncryptedNumber(public_key, data)
+    return private_key.decrypt(enc_num)
 
-def decrypt_list(private_key, list):
-    return [private_key.decrypt(num) for num in list]
+def decrypt_list(public_key, private_key, list):
+    return [decrypt_data(public_key, private_key, num) for num in list]
 
-def decrypt_dict(private_key, dict):
+def decrypt_dict(public_key, private_key, dict):
     for key in dict:
         data = dict[key]
         if isinstance(data, list):
-            out = to_string(decrypt_list(private_key, data))
+            out = to_string(decrypt_list(public_key, private_key, data))
         else:
-            out = decrypt_data(private_key, data)
+            out = decrypt_data(public_key, private_key, data)
         dict[key] = out
     return dict
 
@@ -88,4 +90,4 @@ def test2():
     print("Decrypted value:", decrypted_value)
 
 if __name__ == "__main__":
-    test2()
+    test1()
