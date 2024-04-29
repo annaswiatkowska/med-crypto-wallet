@@ -68,16 +68,16 @@ def test1():
     example_data = {
     "name": "John Doe",
     "age": 30,
-    "height": 175.5,
+    "height": '175.2',
     "student": True
     }
 
     pub, priv = generate_key_pair()
-    encrypt_dict(pub, example_data)
-    print(example_data)
+    enc = encrypt_dict(pub, example_data)
+    print(enc)
 
-    decrypt_dict(priv, example_data)
-    print(example_data)
+    dec = decrypt_dict(pub, priv, example_data)
+    print(dec)
 
 # TEST 2
 def test2():

@@ -9,22 +9,26 @@ def store_keys(public_key, private_key, id):
 def store_fernet_key(fernet_key, id):
     keyring.set_password(id, 'fernet_key', fernet_key.decode())
 
-def get_keys(id):
-    public_key = keyring.get_password(id, 'public_key')
+def get_both_keys(id):
+    public_key = get_public_key(id)
     private_key = keyring.get_password(id, 'private_key')
 
     if public_key is None or private_key is None:
         return None, None
-    
-    pub_key = load_public_key(public_key)
-    return pub_key, load_private_key(private_key, pub_key)
+    return public_key, load_private_key(private_key, public_key)
+
+def get_public_key(id):
+    public_key = keyring.get_password(id, 'public_key')
+
+    if public_key is None:
+        return None
+    return load_public_key(public_key)
 
 def get_fernet_key(id):
     fernet_key = keyring.get_password(id, 'fernet_key')
 
     if fernet_key is None:
         return None
-
     return fernet_key.encode()
 
 def remove_key(id, key_type):
@@ -60,7 +64,7 @@ def test():
     encrypted_value = public_key.encrypt(value)
 
     store_keys(public_key, private_key, 'test1')
-    pub_key, priv_key = get_keys('test1')
+    pub_key, priv_key = get_both_keys('test1')
     
     decrypted_value = priv_key.decrypt(encrypted_value)
     print(decrypted_value)

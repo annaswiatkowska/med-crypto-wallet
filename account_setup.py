@@ -7,7 +7,6 @@ import wallet
 
 def setup_account(insurance_id):
     account = wallet.get_wallet().create_account(alias=insurance_id)
-    account.generate_ed25519_addresses(1)
     return account
 
 def store_keys(public_key, private_key, fernet_key, insurance_id):
@@ -56,5 +55,5 @@ def create_client(name, surname, insurance_id, password, is_doctor):
     return 'Client creation was successfull'
     
 if __name__ == "__main__":
-    output = create_client('Alice', 'Smith', 'GG123456F', '#Paragraph89', False)
+    output = create_client('Lily', 'Stone', 'BB654321Y', 'StarryNight9@!', True)
     print(output)

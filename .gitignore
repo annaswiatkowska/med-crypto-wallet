@@ -1,0 +1,4 @@
+__pycache__/
+walletdb/
+vault.stronghold
+mnemonic.txt
