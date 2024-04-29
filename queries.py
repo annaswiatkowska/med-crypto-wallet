@@ -6,3 +6,6 @@ def get_encrypted_password(insurance_id):
 
 def get_account_id(insurance_id):
     return f"SELECT account_id FROM users WHERE insurance_id = '{insurance_id}';"
+
+def get_is_doctor(account_id):
+    return f"SELECT is_doctor FROM users WHERE account_id = {account_id}"

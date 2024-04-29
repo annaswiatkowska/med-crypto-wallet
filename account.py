@@ -14,7 +14,7 @@ def validate_credentials(insurance_id, password):
     dec_password = encryption.decrypt_password(enc_password, key)
     if password == dec_password:
         return retrieve_account(insurance_id)
-    return print('Password and/or Insurance ID are invalid')
+    return 'Password and/or Insurance ID are invalid'
 
 def retrieve_account(insurance_id):
     conn, cursor = database.connect()

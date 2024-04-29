@@ -36,6 +36,10 @@ def create_client(name, surname, insurance_id, password, is_doctor):
     if not insurance_id_validation(insurance_id):
         return 'Invalid insurance ID format'
     
+    # for doctors add a character to insurance_id
+    if is_doctor is True:
+        insurance_id = 'D' + insurance_id
+
     # generate keys and encrypt password
     public_key, private_key = encryption.generate_key_pair()
     fernet_key = encryption.generate_key()

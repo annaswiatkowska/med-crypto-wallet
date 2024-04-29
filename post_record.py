@@ -1,5 +1,7 @@
 import os
 import json
+import queries
+import database
 import encryption
 import key_storage
 from dotenv import load_dotenv
@@ -10,6 +12,14 @@ node_url = os.getenv("NODE_URL")
 exp_url = os.getenv("EXPLORER_URL")
 
 def post_med_record(doctor_account, patient_account, tag, med_record):
+    if doctor_authorisation(doctor_account) is False:
+        print('Account attempting to send a record is not marked as doctor')
+        return
+
+    if doctor_authorisation(patient_account) is True:
+        print('Posting records to account marked as doctor is not allowed')
+        return
+    
     patient_address = get_address(patient_account)
     params = [SendParams(
         address=patient_address,
@@ -35,6 +45,12 @@ def prepare_record(patient_account, record):
 
     encrypted_record = encryption.encrypt_dict(public_key, record)
     return json.dumps(encrypted_record)
+
+def doctor_authorisation(account):
+    conn, cursor = database.connect()
+    is_doctor = database.select(cursor, queries.get_is_doctor(account.get_metadata().index))[0][0]
+    database.close_connection(conn, cursor)
+    return is_doctor
 
 # TEST
 def test():
