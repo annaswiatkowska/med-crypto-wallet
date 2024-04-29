@@ -2,7 +2,6 @@ import json
 import wallet
 import encryption
 import key_storage
-from phe import EncryptedNumber
 from iota_sdk import hex_to_utf8
 
 import os
