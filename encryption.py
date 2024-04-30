@@ -14,32 +14,45 @@ def to_string(num_list):
     # convert list of numbers back to string
     return ''.join([chr(num) for num in num_list])
 
-def encrypt_data(public_key, data):
-    enc = public_key.encrypt(data)
+def encrypt_num(public_key, num):
+    num = int(num * 1000)
+    enc = public_key.encrypt(num)
+    return enc.ciphertext()
+
+def encrypt_letter(public_key, letter):
+    enc = public_key.encrypt(letter)
     return enc.ciphertext()
 
 def encrypt_list(public_key, list):
-   return [encrypt_data(public_key, num) for num in list]
+   return [encrypt_letter(public_key, num) for num in list]
 
 def encrypt_dict(public_key, dict):
     for key in dict:
         data = dict[key]
         if isinstance(data, int) or isinstance(data, float):
-            out = encrypt_data(public_key, dict[key])
+            out = encrypt_num(public_key, dict[key])
         elif isinstance(data, bool):
-            out = encrypt_data(public_key, int(dict[key]))
+            out = encrypt_num(public_key, int(dict[key]))
         else:
             num = to_numerical(data)
             out = encrypt_list(public_key, num)
         dict[key] = out
     return dict
 
-def decrypt_data(public_key, private_key, data):
-    enc_num = paillier.EncryptedNumber(public_key, data)
-    return private_key.decrypt(enc_num)
+def decrypt_num(public_key, private_key, num):
+    enc_num = paillier.EncryptedNumber(public_key, num)
+    dec_num = private_key.decrypt(enc_num)
+    float_num = float(dec_num/1000)
+    if float_num.is_integer():
+        return int(float_num)
+    return float_num
+
+def decrypt_letter(public_key, private_key, letter):
+    enc_letter = paillier.EncryptedNumber(public_key, letter)
+    return private_key.decrypt(enc_letter)
 
 def decrypt_list(public_key, private_key, list):
-    return [decrypt_data(public_key, private_key, num) for num in list]
+    return [decrypt_letter(public_key, private_key, num) for num in list]
 
 def decrypt_dict(public_key, private_key, dict):
     for key in dict:
@@ -47,7 +60,7 @@ def decrypt_dict(public_key, private_key, dict):
         if isinstance(data, list):
             out = to_string(decrypt_list(public_key, private_key, data))
         else:
-            out = decrypt_data(public_key, private_key, data)
+            out = decrypt_num(public_key, private_key, data)
         dict[key] = out
     return dict
 
@@ -66,9 +79,10 @@ def decrypt_password(encrypted_value, key):
 # TEST 1
 def test1():
     example_data = {
-    "name": "John Doe",
+    "name": "Joe",
     "age": 30,
-    "height": '175.2',
+    "height": 175.2,
+    "results": 133.42,
     "student": True
     }
 
