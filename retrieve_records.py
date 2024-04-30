@@ -2,19 +2,18 @@ import json
 import wallet
 import encryption
 import key_storage
-from iota_sdk import hex_to_utf8
-
-import os
-from dotenv import load_dotenv
-from iota_sdk import Client
-from dataclasses import asdict
+from iota_sdk import SyncOptions, hex_to_utf8
 
 def retrieve_records_list(patient_account):
-    raw_list = patient_account.transactions()
+    addresses = [acc.addresses()[0].address]
+    opt = SyncOptions(addresses=addresses, force_syncing=True, sync_incoming_transactions=True)
+    acc.set_default_sync_options(options=opt)
+    acc.sync()
+
+    raw_list = patient_account.incoming_transactions()
     filtered_list = []
 
     for transaction in raw_list:
-        blockId = transaction.blockId
         obj = json.dumps(transaction.payload, indent=4)
         dict = json.loads(obj)
         if 'essence' in dict:
@@ -23,35 +22,22 @@ def retrieve_records_list(patient_account):
                 payload = essence['payload']
                 if 'tag' in payload and 'data' in payload:
                     tag = payload['tag']
-                    filtered_list.append([hex_to_utf8(tag), blockId])
+                    data = payload['data']
+                    filtered_list.append([hex_to_utf8(tag), hex_to_utf8(data)])
     
     return filtered_list
 
-def retrieve_record(patient_account, record):
-    load_dotenv()
-    node_url = os.getenv("NODE_URL")
-    client = Client(nodes=[node_url])
-    block = client.get_block_data(record[1])
-
+def decrypt_record(patient_account, record):
     tag = record[0]
-    data = None
-    obj = json.dumps(asdict(block.payload), indent=4)
-    dict = json.loads(obj)
-    if 'essence' in dict:
-            essence = dict['essence']
-            if 'payload' in essence:
-                payload = essence['payload']
-                if 'data' in payload:
-                    data = hex_to_utf8(payload['data'])
+    data = record[1]
 
-    if data is not None:
-        encrypted_data = json.loads(data)
-        public_key, private_key = key_storage.get_both_keys(patient_account.get_metadata().alias)
-        decrytpted_data = encryption.decrypt_dict(public_key, private_key, encrypted_data)
-        return [tag, decrytpted_data]
+    encrypted_data = json.loads(data)
+    public_key, private_key = key_storage.get_both_keys(patient_account.get_metadata().alias)
+    decrytpted_data = encryption.decrypt_dict(public_key, private_key, encrypted_data)
+    return [tag, decrytpted_data]
 
 if __name__ == "__main__":
     w = wallet.get_wallet()
-    acc = w.get_account(1)
-    records_list = retrieve_records_list(acc)
-    print(retrieve_record(acc, records_list[0]))
+    acc = w.get_account(3)
+    record_list = retrieve_records_list(acc)
+    print(decrypt_record(acc, record_list[0]))
