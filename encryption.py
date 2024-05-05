@@ -92,16 +92,3 @@ def test1():
 
     dec = decrypt_dict(pub, priv, example_data)
     print(dec)
-
-# TEST 2
-def test2():
-    fernet_key = generate_key()
-    value = 'password123'
-    encrypted_value = encrypt_password(value, fernet_key)
-    print("Encrypted value:", encrypted_value)
-
-    decrypted_value = decrypt_password(encrypted_value, fernet_key)
-    print("Decrypted value:", decrypted_value)
-
-if __name__ == "__main__":
-    test1()

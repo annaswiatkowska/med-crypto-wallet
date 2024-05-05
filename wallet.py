@@ -10,6 +10,7 @@ stronghold_password = os.getenv("STRONGHOLD_PASSWORD")
 def get_secret_manager():
     return StrongholdSecretManager(snapshot_path, stronghold_password)
 
+# retrieve wallet instance
 def get_wallet():
     secret_manager = get_secret_manager()
     client_options = ClientOptions(nodes=[node_url])
@@ -20,19 +21,18 @@ def get_wallet():
     )
     return wallet
 
+# global wallet instance
+wallet = get_wallet()
+
 # called once
 def generate_mnemonic():
     mnemonic = Utils.generate_mnemonic()
-    with open('mnemonic.txt', 'w') as file:
+    with open("mnemonic.txt", "w") as file:
         file.write(mnemonic)
-    get_wallet().store_mnemonic(mnemonic)
+    wallet.store_mnemonic(mnemonic)
 
+# request test funds from IOTA
 def request_funds(address):
-    url = os.environ.get('FAUCET_URL')
+    url = os.environ.get("FAUCET_URL")
     resp = wallet.get_client().request_funds_from_faucet(url, address)
     return resp
-
-if __name__ == "__main__":
-    wallet = get_wallet()
-    account = wallet.get_account(5)
-    print(account.get_metadata())

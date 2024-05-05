@@ -13,29 +13,29 @@ def connect():
         )
 
     except Exception as e:
-        print("Error:", e)
+        print("Error: ", e)
 
     return conn, conn.cursor()
 
+# for data retrieval
 def select(cursor, query):
     cursor.execute(query)
-    return cursor.fetchall()
+    result_list = cursor.fetchall()
+    try:
+        result = result_list[0][0]
+    except:
+        return None
+    return result
 
+# for record insertion or deletion
 def update(cursor, query):
     try:
         cursor.execute(query)
-        print('Successful update. Status message: ', cursor.statusmessage)
+        print("Successful update. Status message: ", cursor.statusmessage)
         cursor.execute("COMMIT;")
     except psycopg2.Error as e:
-        print('Error: ', e)
+        print("Error: ", e)
 
 def close_connection(conn, cursor):
     cursor.close()
     conn.close()
-
-# TEST
-if __name__ == "__main__":
-    conn, cursor = connect()
-    result = select(cursor, 'SELECT * FROM users;')
-    print(result)
-    close_connection(conn, cursor)
