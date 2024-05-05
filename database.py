@@ -21,14 +21,13 @@ def select(cursor, query):
     cursor.execute(query)
     return cursor.fetchall()
 
-def insert(cursor, query):
+def update(cursor, query):
     try:
         cursor.execute(query)
-        print('Insertion successful. Status message: ', cursor.statusmessage)
+        print('Successful update. Status message: ', cursor.statusmessage)
         cursor.execute("COMMIT;")
     except psycopg2.Error as e:
         print('Error: ', e)
-
 
 def close_connection(conn, cursor):
     cursor.close()

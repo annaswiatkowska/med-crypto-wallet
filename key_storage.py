@@ -3,11 +3,11 @@ import keyring
 from phe import paillier
 
 def store_keys(public_key, private_key, id):
-    keyring.set_password('public_key', id, serialize_public_key(public_key))
-    keyring.set_password('private_key', id, serialize_private_key(private_key))
+    keyring.set_password('public_key', str(id), serialize_public_key(public_key))
+    keyring.set_password('private_key', str(id), serialize_private_key(private_key))
 
 def store_fernet_key(fernet_key, id):
-    keyring.set_password('fernet_key', id, fernet_key.decode())
+    keyring.set_password('fernet_key', str(id), fernet_key.decode())
 
 def get_both_keys(id):
     public_key = get_public_key(id)
@@ -32,7 +32,7 @@ def get_fernet_key(id):
     return fernet_key.encode()
 
 def remove_key(id, key_type):
-    keyring.delete_password(id, key_type)
+    keyring.delete_password(key_type, str(id))
 
 def serialize_public_key(public_key):
     dict = {}

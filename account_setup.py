@@ -5,8 +5,9 @@ import database
 import queries
 import wallet
 
-def setup_account(insurance_id):
-    account = wallet.get_wallet().create_account(alias=insurance_id)
+def setup_account(alias):
+    account = wallet.get_wallet().create_account()
+    account.set_alias(alias=alias)
     return account
 
 def store_keys(public_key, private_key, fernet_key, insurance_id):
@@ -46,30 +47,30 @@ def create_client(name, surname, insurance_id, password, is_doctor):
     if is_doctor is True:
         insurance_id = 'D' + insurance_id
 
-    if insurance_id_validation > 0:
+    if insurance_id_validation(insurance_id) > 0:
         return 'Client with given insurance ID already exists in the system'
     
-    # generate fernet key and encrypt password
-    fernet_key = encryption.generate_key()
-    encrypted_password = encryption.encrypt_password(password, fernet_key)
-    key_storage.store_fernet_key(fernet_key, insurance_id)
-
-    # for patients generate and store paillier keys
-    if is_doctor is False:
-        public_key, private_key = encryption.generate_key_pair()
-        key_storage.store_keys(public_key, private_key, insurance_id)
-
     # setup client account
     account = setup_account('active')
     account_id = account.get_metadata().index
 
+    # generate fernet key and encrypt password
+    fernet_key = encryption.generate_key()
+    encrypted_password = encryption.encrypt_password(password, fernet_key)
+    key_storage.store_fernet_key(fernet_key, account_id)
+
+    # for patients generate and store paillier keys
+    if is_doctor is False:
+        public_key, private_key = encryption.generate_key_pair()
+        key_storage.store_keys(public_key, private_key, account_id)
+
     # connect to database and insert new client
     conn, cursor = database.connect()
-    database.insert(cursor, queries.insert_client(name, surname, insurance_id, encrypted_password, is_doctor, account_id))
+    database.update(cursor, queries.insert_client(name, surname, insurance_id, encrypted_password, is_doctor, account_id))
 
     # close database connection
     database.close_connection(conn, cursor)
     return 'Client creation was successfull'
     
 if __name__ == "__main__":
-    print(insurance_id_validation('DCC123456D'))
+    print(create_client('Anna', 'Taylor', 'AA987654G', 'Password23!', False))
