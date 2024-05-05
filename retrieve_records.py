@@ -32,7 +32,7 @@ def decrypt_record(patient_account, record):
     data = record[1]
 
     encrypted_data = json.loads(data)
-    public_key, private_key = key_storage.get_both_keys(patient_account.get_metadata().alias)
+    public_key, private_key = key_storage.get_both_keys(patient_account.get_metadata().index)
     decrytpted_data = encryption.decrypt_dict(public_key, private_key, encrypted_data)
     return [tag, decrytpted_data]
 

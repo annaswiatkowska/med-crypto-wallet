@@ -3,29 +3,29 @@ import keyring
 from phe import paillier
 
 def store_keys(public_key, private_key, id):
-    keyring.set_password(id, 'public_key', serialize_public_key(public_key))
-    keyring.set_password(id, 'private_key', serialize_private_key(private_key))
+    keyring.set_password('public_key', id, serialize_public_key(public_key))
+    keyring.set_password('private_key', id, serialize_private_key(private_key))
 
 def store_fernet_key(fernet_key, id):
-    keyring.set_password(id, 'fernet_key', fernet_key.decode())
+    keyring.set_password('fernet_key', id, fernet_key.decode())
 
 def get_both_keys(id):
     public_key = get_public_key(id)
-    private_key = keyring.get_password(id, 'private_key')
+    private_key = keyring.get_password('private_key', str(id))
 
     if public_key is None or private_key is None:
         return None, None
     return public_key, load_private_key(private_key, public_key)
 
 def get_public_key(id):
-    public_key = keyring.get_password(id, 'public_key')
+    public_key = keyring.get_password('public_key', str(id))
 
     if public_key is None:
         return None
     return load_public_key(public_key)
 
 def get_fernet_key(id):
-    fernet_key = keyring.get_password(id, 'fernet_key')
+    fernet_key = keyring.get_password('fernet_key', str(id))
 
     if fernet_key is None:
         return None

@@ -21,7 +21,7 @@ def post_med_record(doctor_account, patient_account, title, med_record):
         print('Posting records to account marked as doctor is not allowed')
         return
     
-    patient_address = get_address(patient_account)
+    patient_address = patient_account.generate_ed25519_addresses(1)[0].address
     doctor_address = get_address(doctor_account)
     params = [SendParams(
         address=patient_address,
