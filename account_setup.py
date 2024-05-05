@@ -5,9 +5,12 @@ import database
 import queries
 import wallet
 
-def setup_account(alias):
+def setup_account(alias, is_doctor):
     account = wallet.get_wallet().create_account()
     account.set_alias(alias=alias)
+    if is_doctor is True:
+        address = account.addresses()[0].address
+        wallet.request_funds(address)
     return account
 
 def store_keys(public_key, private_key, fernet_key, insurance_id):
@@ -51,7 +54,7 @@ def create_client(name, surname, insurance_id, password, is_doctor):
         return 'Client with given insurance ID already exists in the system'
     
     # setup client account
-    account = setup_account('active')
+    account = setup_account('active', is_doctor)
     account_id = account.get_metadata().index
 
     # generate fernet key and encrypt password
