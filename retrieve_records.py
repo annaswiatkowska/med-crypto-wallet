@@ -41,7 +41,17 @@ def decrypt_record(patient_account, record):
     tag = record[0]
     data = record[1]
 
-    encrypted_data = json.loads(data)
+
+    # message on invalid data format
+    try:
+        encrypted_data = json.loads(data)
+    except:
+        print("Data appears to be incorrectly formatted")
+
+    # message in case data cannot be correctly decrypted by patient's key
     public_key, private_key = key_storage.get_both_keys(patient_account.get_metadata().index)
-    decrytpted_data = encryption.decrypt_dict(public_key, private_key, encrypted_data)
+    try:
+        decrytpted_data = encryption.decrypt_dict(public_key, private_key, encrypted_data)
+    except:
+        print("Data in record appears to be corrupted")
     return [tag, decrytpted_data]
