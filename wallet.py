@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from iota_sdk import (ClientOptions, CoinType, StrongholdSecretManager, Utils, Wallet)
+from iota_sdk import (ClientOptions, CoinType, StrongholdSecretManager, Wallet)
 
 load_dotenv()
 node_url = os.getenv("NODE_URL")
