@@ -14,6 +14,7 @@ def to_string(num_list):
     # convert list of numbers back to string
     return ''.join([chr(num) for num in num_list])
 
+# encrypt medical record
 def encrypt_num(public_key, num):
     num = int(num * 1000)
     enc = public_key.encrypt(num)
@@ -39,6 +40,7 @@ def encrypt_dict(public_key, dict):
         dict[key] = out
     return dict
 
+# decrypt medical record
 def decrypt_num(public_key, private_key, num):
     enc_num = paillier.EncryptedNumber(public_key, num)
     dec_num = private_key.decrypt(enc_num)
@@ -75,20 +77,3 @@ def encrypt_password(value, key):
 def decrypt_password(encrypted_value, key):
     f = Fernet(key)
     return f.decrypt(encrypted_value.encode()).decode()
-
-# TEST 1
-def test1():
-    example_data = {
-    "name": "Joe",
-    "age": 30,
-    "height": 175.2,
-    "results": 133.42,
-    "student": True
-    }
-
-    pub, priv = generate_key_pair()
-    enc = encrypt_dict(pub, example_data)
-    print(enc)
-
-    dec = decrypt_dict(pub, priv, example_data)
-    print(dec)
