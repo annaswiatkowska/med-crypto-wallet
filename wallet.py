@@ -24,13 +24,6 @@ def get_wallet():
 # global wallet instance
 wallet = get_wallet()
 
-# called once
-def generate_mnemonic():
-    mnemonic = Utils.generate_mnemonic()
-    with open("mnemonic.txt", "w") as file:
-        file.write(mnemonic)
-    wallet.store_mnemonic(mnemonic)
-
 # request test funds from IOTA
 def request_funds(address):
     url = os.environ.get("FAUCET_URL")
