@@ -50,7 +50,7 @@ def post_med_record(doctor_account, patient_account, title, med_record, cursor):
 
 # format medical record for transaction payload
 def prepare_record(patient_account, record):
-    id = patient_account.get_metadata().alias
+    id = patient_account.get_metadata().index
     public_key = key_storage.get_public_key(id)
 
     encrypted_record = encryption.encrypt_dict(public_key, record)
@@ -66,20 +66,3 @@ def get_tag(title):
     timestamp = datetime.datetime.now()
     formatted_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
     return str(formatted_timestamp + ' ' + title)
-
-# TEST
-def test():
-    example_record = {
-    "age": 20,
-    "height": 160,
-    "something": 133,
-    "other smth": 12.5,
-    "some str": "AUTH",
-    "someting else": 133.2,
-    "others": "CMP",
-    "example": 13,
-    "example2": 122,
-    "example3": 99,
-    "example4": 100,
-    "example5": 1
-    }

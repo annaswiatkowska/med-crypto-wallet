@@ -54,23 +54,49 @@ def prepare_and_post(doctor_acc, patient_acc):
     title = input("Input title of medical record: ")
     print("Enter key-value pairs for the record (press 'Enter' without entering a key to stop):")
     record = {}
+    # max pair count that will be accepted by network
     max_count = 16
+    # Non-empty string indicates that user entered existing key and might want to make a change
+    fixing_record = ''
     while len(record) < max_count:
-        key = input("Enter key: ")
-        if not key:
-            break  # Exit the loop if the user presses Enter without entering a key
-        value = input("Enter value: ")
+
+        if (fixing_record):
+            key = input(f'New key for "{fixing_record}" (empty to only fix value): ')
+            if (key): 
+                oldval = record.pop(fixing_record)
+                record[key] = oldval
+            else:
+                key = fixing_record
+        else:   
+            key = input("Enter key: ")
+            if not key:
+                break  # Exit the loop if the user presses Enter without entering a key
         
-        # check if value is int or float
-        try: 
-            value = float(value)
-        except: pass
+        if key in record and fixing_record == '':
+            fixing_record = key
+            continue # re-enter loop to record contents
 
-        # If the value is a string, subtract its length from the maximum number of pairs
-        if isinstance(value, str):
-            max_pairs -= (len(value) - 1)
+        if (fixing_record):
+            value = input(f'New value (empty to leave "{record[key]}"): ')
+        else:
+            value = input("Enter value: ")
+            # check if value is int or float
+            try: 
+                value = float(value)
+            except: pass
 
-        record[key] = value
+            # If the value is a string, subtract its length from the maximum number of pairs
+            if isinstance(value, str):
+                max_count -= (len(value) - 1)
+                if len(record) >= max_count:
+                    print("This value length extends maximum record size, please include it into next post: ")
+                    fixing_record = ''
+                    continue
+
+            record[key] = value
+
+        fixing_record = ''
+        
 
     print("Final Record:")
     print(record)
@@ -121,7 +147,7 @@ def login():
         password = input("Enter your password: ")
         output = account.validate_credentials(insurance_id, password, cursor)
         if output is None:
-            choice = input("Press 'q' if you wish to go back and register inestad: ")
+            choice = input("Press 'q' if you wish to go back and register instead: ")
             if choice == 'q':
                 break
             continue
@@ -129,6 +155,7 @@ def login():
             acc = output
             print("Login is successful!")
             proceed_after_login(acc)
+            break
 
 def register():
     print("Register your account: ")
