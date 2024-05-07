@@ -27,7 +27,7 @@ def validate_credentials(insurance_id, password, cursor):
     return None
 
 # not added to main
-def delete_account(insurance_id):
+def delete_account(insurance_id, cursor):
     if insurance_id.startswith("D"):
         return "Deleting doctor account is not permitted"
     
@@ -41,10 +41,7 @@ def delete_account(insurance_id):
     remove_all_keys(account_id)
 
     # delete account record from local database
-    conn, cursor = database.connect()
     account_id = database.update(cursor, queries.remove_client_record(insurance_id))
-    database.close_connection(conn, cursor)
-
     return "Account was deleted successfully"
 
 def remove_all_keys(account_id):

@@ -32,8 +32,6 @@ def encrypt_dict(public_key, dict):
         data = dict[key]
         if isinstance(data, int) or isinstance(data, float):
             out = encrypt_num(public_key, dict[key])
-        elif isinstance(data, bool):
-            out = encrypt_num(public_key, int(dict[key]))
         else:
             num = to_numerical(data)
             out = encrypt_list(public_key, num)

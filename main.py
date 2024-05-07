@@ -187,7 +187,10 @@ def register():
             if choice == 'q':
                 break
             continue
-        
+
+def account_deletion():
+    insurance_id = input("Input the insurance number of patient's account that should be deleted: ")
+    account.delete_account(insurance_id, cursor)
 
 def main():
     print("Welcome to the IOTA Medical Records Wallet!")
@@ -207,4 +210,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    account_deletion()
