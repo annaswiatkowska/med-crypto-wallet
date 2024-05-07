@@ -17,6 +17,10 @@ def connect():
 
     return conn, conn.cursor()
 
+def close_connection(conn, cursor):
+    cursor.close()
+    conn.close()
+
 # for data retrieval
 def select(cursor, query):
     cursor.execute(query)
@@ -35,7 +39,3 @@ def update(cursor, query):
         cursor.execute("COMMIT;")
     except psycopg2.Error as e:
         print("Error: ", e)
-
-def close_connection(conn, cursor):
-    cursor.close()
-    conn.close()

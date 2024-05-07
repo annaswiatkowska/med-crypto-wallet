@@ -1,6 +1,5 @@
 import os
 import json
-import wallet
 import queries
 import database
 import encryption

@@ -17,7 +17,7 @@ def retrieve_records_list(patient_account):
     patient_account.set_default_sync_options(options=opt)
     patient_account.sync()
 
-    # retrieve all transactions recieved by the account
+    # retrieve all transactions received by the account
     raw_list = patient_account.incoming_transactions()
 
     # filter the list to save only valid transactions with tag and payload
@@ -40,7 +40,6 @@ def retrieve_records_list(patient_account):
 def decrypt_record(patient_account, record):
     tag = record[0]
     data = record[1]
-
 
     # message on invalid data format
     try:
