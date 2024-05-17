@@ -210,4 +210,4 @@ def main():
 
 
 if __name__ == "__main__":
-    account_deletion()
+    main()
