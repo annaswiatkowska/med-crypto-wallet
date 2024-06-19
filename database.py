@@ -31,6 +31,11 @@ def select(cursor, query):
         return None
     return result
 
+# for list retrieval
+def select_list(cursor, query):
+    cursor.execute(query)
+    return cursor.fetchall()
+
 # for record insertion or deletion
 def update(cursor, query):
     try:
